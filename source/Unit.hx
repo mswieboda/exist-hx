@@ -1,13 +1,14 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxBasic;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.util.FlxColor;
 
 class Unit extends FlxSprite {
-  var selected: Bool = false;
-  var selectionColor: FlxColor = 0xFFFF00FF;
+  public var drawables: FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
+  var selectedCircle: FlxSprite;
 
   static inline var GRID_WIDTH: Int = 32;
 
@@ -21,6 +22,13 @@ class Unit extends FlxSprite {
     this.color = color;
 
     loadGraphic(AssetPaths.unit__png, false, 32, 32);
+
+    selectedCircle = new FlxSprite(x, y);
+    selectedCircle.loadGraphic(AssetPaths.selected_unit__png, false, 32, 32);
+    selectedCircle.visible = false;
+    selectedCircle.color = 0xFF0000FF;
+
+    drawables.add(selectedCircle);
   }
 
   override function update(elapsed: Float) {
@@ -35,12 +43,11 @@ class Unit extends FlxSprite {
     super.update(elapsed);
   }
 
+  public function selected() {
+    return selectedCircle.visible;
+  }
+
   public function toggleSelect() {
-    var tempColor = this.color;
-
-    selected = !selected;
-
-    color = selectionColor;
-    selectionColor = tempColor;
+    selectedCircle.visible = !selectedCircle.visible;
   }
 }

@@ -10,6 +10,11 @@ class PlayState extends FlxState {
     player = new Player(0xFF00FF00);
 
     add(grid.tiles);
+
+    for (unit in player.units) {
+      add(unit.drawables);
+    }
+
     add(player.units);
 
     super.create();
