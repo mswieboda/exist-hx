@@ -19,6 +19,8 @@ class PlayState extends FlxState {
 
     add(player.units);
 
+    add(player.selectionSprite);
+
     super.create();
   }
 
