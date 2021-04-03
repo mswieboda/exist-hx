@@ -33,18 +33,6 @@ class Unit extends FlxSprite {
     drawables.add(selectedCircle);
   }
 
-  override function update(elapsed: Float) {
-    if (FlxG.mouse.justPressed) {
-      var mouse = FlxG.mouse.getWorldPosition();
-
-      if (getHitbox().containsPoint(mouse)) {
-        toggleSelect();
-      }
-    }
-
-    super.update(elapsed);
-  }
-
   public function selected() {
     return selectedCircle.visible;
   }
@@ -54,9 +42,17 @@ class Unit extends FlxSprite {
   }
 
   public function updateSelection(selection: FlxRect) {
-    if (getHitbox().overlaps(selection)) {
-      if (!selected()) {
+    if (FlxG.mouse.justPressed) {
+      var mouse = FlxG.mouse.getWorldPosition();
+
+      if (getHitbox().containsPoint(mouse)) {
         toggleSelect();
+      }
+    } else {
+      if (getHitbox().overlaps(selection)) {
+        if (!selected()) {
+          toggleSelect();
+        }
       }
     }
   }
