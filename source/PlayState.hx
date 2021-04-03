@@ -6,10 +6,12 @@ class PlayState extends FlxState {
   var player: Player;
 
   override public function create() {
-    var grid = new TileGrid(0, 0, 15, 30, AssetPaths.tile__png, 0xFF009900, 0xFF007700);
+    var grid = new IsoTiles(0, 0, 112+16, 56+8);
     player = new Player(0xFF00FF00);
 
-    add(grid.tiles);
+    grid.loadTiles(AssetPaths.tile__png, 32, 16, true);
+
+    add(grid);
 
     for (unit in player.units) {
       add(unit.drawables);
