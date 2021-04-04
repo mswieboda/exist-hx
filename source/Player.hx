@@ -61,21 +61,24 @@ class Player {
 
       selection.x = Math.min(mouse.x, selectionStart.x);
       selection.y = Math.min(mouse.y, selectionStart.y);
-      selection.width = Math.max(Math.abs(mouse.x - selectionStart.x), 0.1);
-      selection.height = Math.max(Math.abs(mouse.y - selectionStart.y), 0.1);
+      selection.width = Math.abs(mouse.x - selectionStart.x);
+      selection.height = Math.abs(mouse.y - selectionStart.y);
 
       var lineStyle: LineStyle = {thickness: SELECTION_THICKNESS, color: FlxColor.BLUE};
 
       FlxSpriteUtil.fill(selectionSprite, FlxColor.TRANSPARENT);
-      FlxSpriteUtil.drawRect(
-        selectionSprite,
-        selection.x,
-        selection.y,
-        selection.width,
-        selection.height,
-        FlxColor.TRANSPARENT,
-        lineStyle
-      );
+
+      if (selection.width > 0 && selection.height > 0) {
+        FlxSpriteUtil.drawRect(
+          selectionSprite,
+          selection.x,
+          selection.y,
+          selection.width,
+          selection.height,
+          FlxColor.TRANSPARENT,
+          lineStyle
+        );
+      }
     } else if (FlxG.mouse.justReleased) {
       selectionSprite.visible = false;
     }

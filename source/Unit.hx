@@ -45,14 +45,12 @@ class Unit extends FlxSprite {
     if (FlxG.mouse.justPressed) {
       var mouse = FlxG.mouse.getWorldPosition();
 
-      if (getHitbox().containsPoint(mouse)) {
+      if (!selected() && getHitbox().containsPoint(mouse)) {
         toggleSelect();
       }
     } else {
-      if (getHitbox().overlaps(selection)) {
-        if (!selected()) {
-          toggleSelect();
-        }
+      if (!selected() && getHitbox().overlaps(selection)) {
+        toggleSelect();
       }
     }
   }
