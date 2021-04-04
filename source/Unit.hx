@@ -46,6 +46,8 @@ class Unit extends FlxSprite {
   }
 
   public function toggleSelect() {
+    selectedCircle.x = x;
+    selectedCircle.y = y;
     selectedCircle.visible = !selectedCircle.visible;
   }
 
@@ -61,8 +63,14 @@ class Unit extends FlxSprite {
         toggleSelect();
       }
     } else {
-      if (!selected() && getHitbox().overlaps(selection)) {
-        toggleSelect();
+      if (getHitbox().overlaps(selection)) {
+        if (!selected()) {
+          select();
+        }
+      } else {
+        if (selected()) {
+          deselect();
+        }
       }
     }
   }
