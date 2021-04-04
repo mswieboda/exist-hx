@@ -3,6 +3,7 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
@@ -11,6 +12,7 @@ class Player {
   public var color: FlxColor;
   public var units: FlxTypedGroup<Unit> = new FlxTypedGroup<Unit>();
   public var selection: FlxRect = new FlxRect();
+  public var selectionStart: FlxPoint = new FlxPoint();
   public var selectionSprite: FlxSprite;
 
   public static inline var SELECTION_THICKNESS: Float = 3.0;
@@ -48,48 +50,34 @@ class Player {
   }
 
   function updateSelection() {
-    // TODO: fix for negative width/height, do absolute value, etc
     if (FlxG.mouse.justPressed) {
-      var mouse = FlxG.mouse.getWorldPosition();
-
-      selection.x = mouse.x;
-      selection.y = mouse.y;
-      selection.width = 0;
-      selection.height = 0;
-
-      selectionSprite.x = selection.x;
-      selectionSprite.y = selection.y;
+      selectionStart = FlxG.mouse.getWorldPosition();
 
       FlxSpriteUtil.fill(selectionSprite, FlxColor.TRANSPARENT);
 
       selectionSprite.visible = true;
     } else if (FlxG.mouse.pressed) {
       var mouse = FlxG.mouse.getWorldPosition();
-      selection.width = mouse.x - selection.x;
-      selection.height = mouse.y - selection.y;
+
+      selection.x = Math.min(mouse.x, selectionStart.x);
+      selection.y = Math.min(mouse.y, selectionStart.y);
+      selection.width = Math.max(Math.abs(mouse.x - selectionStart.x), 0.1);
+      selection.height = Math.max(Math.abs(mouse.y - selectionStart.y), 0.1);
 
       var lineStyle: LineStyle = {thickness: SELECTION_THICKNESS, color: FlxColor.BLUE};
-      var width = selection.width - SELECTION_THICKNESS;
-      var height = selection.height - SELECTION_THICKNESS;
-
-      if (width <= 0 || height <= 0) return;
 
       FlxSpriteUtil.fill(selectionSprite, FlxColor.TRANSPARENT);
       FlxSpriteUtil.drawRect(
         selectionSprite,
-        SELECTION_THICKNESS,
-        SELECTION_THICKNESS,
-        width,
-        height,
+        selection.x,
+        selection.y,
+        selection.width,
+        selection.height,
         FlxColor.TRANSPARENT,
         lineStyle
       );
     } else if (FlxG.mouse.justReleased) {
       selectionSprite.visible = false;
-      selection.x = 0;
-      selection.y = 0;
-      selection.width = 0;
-      selection.height = 0;
     }
 
     updateUnitsSelection();
