@@ -1,13 +1,19 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxState;
 
 class PlayState extends FlxState {
   var player: Player;
+  var hud: HeadsUpDisplay;
+  var selectionHandler: SelectionHandler;
 
   override public function create() {
-    var grid = new IsoTiles(0, 0, 640, 480);
     player = new Player(0xFF00FF00);
+    hud = new HeadsUpDisplay(player);
+    selectionHandler = new SelectionHandler(player, hud);
+
+    var grid = new IsoTiles(0, 0, FlxG.width, FlxG.height);
 
     grid.loadTiles(AssetPaths.tile__png, 32, 16, true);
 
@@ -21,11 +27,13 @@ class PlayState extends FlxState {
 
     add(player.selectionSprite);
 
+    add(hud);
+
     super.create();
   }
 
   override function update(elapsed: Float) {
-    player.update(elapsed);
+    selectionHandler.update(elapsed);
     super.update(elapsed);
   }
 }

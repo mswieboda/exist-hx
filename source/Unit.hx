@@ -7,11 +7,13 @@ import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 
 class Unit extends FlxSprite {
-  public var drawables: FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
-  var selectedCircle: FlxSprite;
-
   static inline var WIDTH: Int = 32;
   static inline var HEIGHT: Int = 32;
+
+  var selectedCircle: FlxSprite;
+
+  public var drawables: FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
+  public var selectionIcon: FlxSprite;
 
   public function new(
     x: Float,
@@ -26,14 +28,23 @@ class Unit extends FlxSprite {
     loadGraphic(AssetPaths.unit__png, false, WIDTH, HEIGHT);
 
     selectedCircle = new FlxSprite(x, y);
+    selectedCircle.active = false;
+    selectedCircle.immovable = true;
+    selectedCircle.moves = false;
     selectedCircle.loadGraphic(AssetPaths.selected_unit__png, false, WIDTH, HEIGHT);
     selectedCircle.visible = false;
     selectedCircle.color = selectionColor;
 
+    selectionIcon = new FlxSprite();
+    selectionIcon.active = false;
+    selectionIcon.immovable = true;
+    selectionIcon.moves = false;
+    selectionIcon.makeGraphic(HeadsUpDisplay.GRID_ICON_SIZE, HeadsUpDisplay.GRID_ICON_SIZE, FlxColor.BLUE);
+
     drawables.add(selectedCircle);
   }
 
-  public function selected() {
+  public function selected(): Bool {
     return selectedCircle.visible;
   }
 
@@ -52,24 +63,26 @@ class Unit extends FlxSprite {
   }
 
   public function updateSelection(selection: FlxRect) {
-    if (FlxG.mouse.justPressed) {
-      if (!FlxG.keys.anyPressed([SHIFT])) {
-        deselect();
-      }
+    if (FlxG.mouse.pressed) {
+      if (FlxG.mouse.justPressed) {
+        if (!FlxG.keys.anyPressed([SHIFT])) {
+          deselect();
+        }
 
-      var mouse = FlxG.mouse.getWorldPosition();
+        var mouse = FlxG.mouse.getWorldPosition();
 
-      if (getHitbox().containsPoint(mouse)) {
-        toggleSelect();
-      }
-    } else {
-      if (getHitbox().overlaps(selection)) {
-        if (!selected()) {
-          select();
+        if (getHitbox().containsPoint(mouse)) {
+          toggleSelect();
         }
       } else {
-        if (selected()) {
-          deselect();
+        if (getHitbox().overlaps(selection)) {
+          if (!selected()) {
+            select();
+          }
+        } else {
+          if (selected() && !FlxG.keys.anyPressed([SHIFT])) {
+            deselect();
+          }
         }
       }
     }

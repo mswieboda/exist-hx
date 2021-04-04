@@ -1,5 +1,7 @@
 package;
 
+using Lambda;
+
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -12,11 +14,13 @@ class Player {
   public var color: FlxColor;
   public var units: FlxTypedGroup<Unit> = new FlxTypedGroup<Unit>();
   public var selection: FlxRect = new FlxRect();
-  public var selectionStart: FlxPoint = new FlxPoint();
   public var selectionSprite: FlxSprite;
+  public var hasSelectedUnits: Bool = false;
 
   public static inline var SELECTION_THICKNESS: Float = 3.0;
   public static inline var SELECTION_COLOR: FlxColor = FlxColor.LIME;
+
+  var selectionStart: FlxPoint = new FlxPoint();
 
   public function new(color: FlxColor) {
     this.color = color;
@@ -35,8 +39,18 @@ class Player {
 
     var unitCoords = [
       [30, 30],
+      [35, 35],
+      [50, 50],
+      [90, 90],
       [100, 100],
-      [50, 300]
+      [130, 100],
+      [130, 130],
+      [100, 150],
+      [130, 150],
+      [150, 150],
+      [50, 300],
+      [150, 300],
+      [300, 300]
     ];
 
     for (coords in unitCoords) {
@@ -45,11 +59,13 @@ class Player {
     }
   }
 
-  public function update(elapsed: Float) {
-    updateSelection();
+  public function selectedUnits(): Array<Unit> {
+    return units.members.filter(unit -> {
+      return unit.selected();
+    });
   }
 
-  function updateSelection() {
+  public function updateSelection() {
     if (FlxG.mouse.justPressed) {
       selectionStart = FlxG.mouse.getWorldPosition();
 
@@ -87,8 +103,12 @@ class Player {
   }
 
   function updateUnitsSelection() {
+    hasSelectedUnits = false;
+
     units.forEach(unit -> {
       unit.updateSelection(selection);
+
+      hasSelectedUnits = hasSelectedUnits || unit.selected();
     });
   }
 }
