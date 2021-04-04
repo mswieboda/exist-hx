@@ -65,7 +65,7 @@ class Unit extends FlxSprite {
   public function updateSelection(selection: FlxRect) {
     if (FlxG.mouse.pressed) {
       if (FlxG.mouse.justPressed) {
-        if (!FlxG.keys.anyPressed([SHIFT])) {
+        if (!FlxG.keys.anyPressed([SHIFT, CONTROL])) {
           deselect();
         }
 
@@ -76,11 +76,17 @@ class Unit extends FlxSprite {
         }
       } else {
         if (getHitbox().overlaps(selection)) {
-          if (!selected()) {
-            select();
+          if (FlxG.keys.anyPressed([CONTROL])) {
+            if (selected()) {
+              deselect();
+            }
+          } else {
+            if (!selected()) {
+              select();
+            }
           }
         } else {
-          if (selected() && !FlxG.keys.anyPressed([SHIFT])) {
+          if (selected() && !FlxG.keys.anyPressed([SHIFT, CONTROL])) {
             deselect();
           }
         }
