@@ -37,15 +37,27 @@ class Unit extends FlxSprite {
     return selectedCircle.visible;
   }
 
+  public function select() {
+    selectedCircle.visible = true;
+  }
+
+  public function deselect() {
+    selectedCircle.visible = false;
+  }
+
   public function toggleSelect() {
     selectedCircle.visible = !selectedCircle.visible;
   }
 
   public function updateSelection(selection: FlxRect) {
     if (FlxG.mouse.justPressed) {
+      if (!FlxG.keys.anyPressed([SHIFT])) {
+        deselect();
+      }
+
       var mouse = FlxG.mouse.getWorldPosition();
 
-      if (!selected() && getHitbox().containsPoint(mouse)) {
+      if (getHitbox().containsPoint(mouse)) {
         toggleSelect();
       }
     } else {
