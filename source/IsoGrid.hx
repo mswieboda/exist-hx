@@ -14,33 +14,42 @@ class IsoGrid extends FlxSprite {
   var cols: Int;
   var rows: Int;
 
-  static function toX(col: Int, row: Int, rows: Int): Int {
+  public static function toX(col: Int, row: Int, rows: Int): Int {
     return (rows + col - row) * TILE_WIDTH_HALF - TILE_WIDTH_HALF;
   }
 
-  static function toY(col: Int, row: Int): Int {
+  public static function toY(col: Int, row: Int): Int {
     return (col + row) * TILE_HEIGHT_HALF;
   }
 
-  static function toWidth(cols: Int, rows: Int) {
+  public static function toWidth(cols: Int, rows: Int) {
     return (cols + rows) * TILE_WIDTH_HALF;
   }
 
-  static function toHeight(cols: Int, rows: Int) {
+  public static function toHeight(cols: Int, rows: Int) {
     return (cols + rows) * TILE_HEIGHT_HALF;
+  }
+
+  public static function gridToX(colStart, rowStart, rows, mapWidth) {
+    return (mapWidth / 2) - TILE_WIDTH_HALF - toX(colStart, rowStart, rows) + colStart * TILE_WIDTH;
+  }
+
+  public static function originTileX(rows, mapWidth) {
+    return (mapWidth / 2) - TILE_WIDTH_HALF + toX(0, 0, rows);
   }
 
   public function new(
     ?cols: Int = 1,
     ?rows: Int = 1,
     ?colStart: Int = 0,
-    ?rowStart: Int = 0
+    ?rowStart: Int = 0,
+    mapWidth: Int = 0
   ) {
     if (cols <= 0 || rows <= 0) {
       throw new haxe.Exception('cols and rows must be > 0, cols: $cols, rows: $rows');
     }
 
-    var xPos = (FlxG.width / 2) - TILE_WIDTH_HALF - toX(colStart, rowStart, rows) + colStart * TILE_WIDTH;
+    var xPos = gridToX(colStart, rowStart, rows, mapWidth == 0 ? FlxG.width : mapWidth);
     var yPos = toY(colStart, rowStart);
 
     super(xPos, yPos);

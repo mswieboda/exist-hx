@@ -13,6 +13,8 @@ class PlayState extends FlxState {
     hud = new HeadsUpDisplay(player);
     selectionHandler = new SelectionHandler(player, hud);
 
+    Camera.setup();
+
     var grid = new IsoGrid(8, 5, 0, 0);
     var grid2 = new IsoGrid(3, 3, 9, 0);
 
@@ -37,6 +39,7 @@ class PlayState extends FlxState {
 
   override function update(elapsed: Float) {
     selectionHandler.update(elapsed);
+    Camera.update(elapsed);
     super.update(elapsed);
   }
 }
