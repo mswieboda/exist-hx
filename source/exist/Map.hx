@@ -16,13 +16,18 @@ class Map extends FlxGroup {
 
     var grid = new IsoGrid(size, size, 0, 0, width);
     var tiles = [
-      [0, 0, 0, null, 0, 0, 0, 5, -1, -4],
-      [0, 0, null, null, null, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      [1, 1, 1, null, 1, 1, 1, 5, -1, -4],
+      [1, 1, null, null, null, 1, 1, 1, 1, 1],
+      [1, 1, 1, null, null, null, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [2, 2, 2, 1, 1, 1, 2, 1, 2, 1],
+      [2, 2, 2, 3, 3, 3, 3, 3, 1, 1],
+      [2, 2, 1, 1, 3, 3, 3, 1, 1, 1],
+      [1, 1, 1, 1, 1, 3, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1 ,1, 1, 1, 1]
     ];
 
-    grid.loadTiles(AssetPaths.tile__png, tiles, 0, true);
+    grid.loadTiles(AssetPaths.tiles__png, tiles, 0, true);
 
     add(grid);
   }
