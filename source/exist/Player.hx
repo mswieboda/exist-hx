@@ -67,10 +67,6 @@ class Player extends FlxGroup {
   public function updateSelection() {
     if (FlxG.mouse.justPressed) {
       selectionStart = FlxG.mouse.getWorldPosition();
-
-      FlxSpriteUtil.fill(selectionSprite, FlxColor.TRANSPARENT);
-
-      selectionSprite.visible = true;
     } else if (FlxG.mouse.pressed) {
       var mouse = FlxG.mouse.getWorldPosition();
       var x = Std.int(Math.min(mouse.x, selectionStart.x));
@@ -100,7 +96,7 @@ class Player extends FlxGroup {
         );
       }
     } else if (FlxG.mouse.justReleased) {
-      selectionSprite.visible = false;
+      selectionSprite.makeGraphic(1, 1, FlxColor.TRANSPARENT, true);
     }
 
     updateUnitsSelection();
