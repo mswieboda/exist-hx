@@ -29,6 +29,8 @@ class HeadsUpDisplay extends FlxSprite {
     this.player = player;
 
     makeGraphic(FlxG.width, HEIGHT, FlxColor.TRANSPARENT);
+
+    scrollFactor.set(0, 0);
   }
 
   override function update(elapsed: Float) {
