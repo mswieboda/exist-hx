@@ -1,4 +1,4 @@
-package;
+package exist;
 
 import flixel.FlxG;
 import flixel.FlxState;
@@ -23,15 +23,7 @@ class PlayState extends FlxState {
 
     add(grid);
     add(grid2);
-
-    for (unit in player.units) {
-      add(unit.drawables);
-    }
-
-    add(player.units);
-
-    add(player.selectionSprite);
-
+    add(player);
     add(hud);
 
     super.create();

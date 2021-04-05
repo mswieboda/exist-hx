@@ -1,19 +1,19 @@
-package;
+package exist;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxGroup;
 import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 
-class Unit extends FlxSprite {
+class Unit extends FlxGroup {
   static inline var WIDTH: Int = 32;
   static inline var HEIGHT: Int = 32;
 
-  var selectedCircle: FlxSprite;
-
-  public var drawables: FlxTypedGroup<FlxSprite> = new FlxTypedGroup<FlxSprite>();
+  public var selectedCircle(default, null): FlxSprite;
   public var selectionIcon: FlxSprite;
+
+  var sprite: FlxSprite;
 
   public function new(
     x: Float,
@@ -21,18 +21,20 @@ class Unit extends FlxSprite {
     color: FlxColor,
     selectionColor: FlxColor
   ) {
-    super(x, y);
+    super();
 
-    this.color = color;
-
-    loadGraphic(AssetPaths.unit__png, false, WIDTH, HEIGHT);
+    sprite = new FlxSprite(x, y);
+    sprite.loadGraphic(AssetPaths.unit__png, false, WIDTH, HEIGHT);
+    sprite.immovable = true; // TODO: this should be removed when movement implemented
+    sprite.moves = false; // TODO: this should be removed when movement implemented
+    sprite.color = color;
 
     selectedCircle = new FlxSprite(x, y);
     selectedCircle.active = false;
     selectedCircle.immovable = true;
     selectedCircle.moves = false;
-    selectedCircle.loadGraphic(AssetPaths.selected_unit__png, false, WIDTH, HEIGHT);
     selectedCircle.visible = false;
+    selectedCircle.loadGraphic(AssetPaths.selected_unit__png, false, WIDTH, HEIGHT);
     selectedCircle.color = selectionColor;
 
     selectionIcon = new FlxSprite();
@@ -41,7 +43,8 @@ class Unit extends FlxSprite {
     selectionIcon.moves = false;
     selectionIcon.makeGraphic(HeadsUpDisplay.GRID_ICON_SIZE, HeadsUpDisplay.GRID_ICON_SIZE, FlxColor.BLUE);
 
-    drawables.add(selectedCircle);
+    add(selectedCircle);
+    add(sprite);
   }
 
   public function selected(): Bool {
@@ -57,8 +60,7 @@ class Unit extends FlxSprite {
   }
 
   public function toggleSelect() {
-    selectedCircle.x = x;
-    selectedCircle.y = y;
+    // TODO: sync x, y with sprite when movement implemented
     selectedCircle.visible = !selectedCircle.visible;
   }
 
@@ -71,11 +73,11 @@ class Unit extends FlxSprite {
 
         var mouse = FlxG.mouse.getWorldPosition();
 
-        if (getHitbox().containsPoint(mouse)) {
+        if (sprite.getHitbox().containsPoint(mouse)) {
           toggleSelect();
         }
       } else {
-        if (getHitbox().overlaps(selection)) {
+        if (sprite.getHitbox().overlaps(selection)) {
           if (FlxG.keys.anyPressed([CONTROL])) {
             if (selected()) {
               deselect();

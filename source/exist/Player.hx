@@ -1,28 +1,30 @@
-package;
+package exist;
 
 using Lambda;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxGroup;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 
-class Player {
+class Player extends FlxGroup {
   public var color: FlxColor;
-  public var units: FlxTypedGroup<Unit> = new FlxTypedGroup<Unit>();
+  public var units(default, null): FlxTypedGroup<Unit> = new FlxTypedGroup<Unit>();
   public var selection: FlxRect = new FlxRect();
-  public var selectionSprite: FlxSprite;
   public var hasSelectedUnits: Bool = false;
 
   public static inline var SELECTION_THICKNESS: Float = 3.0;
   public static inline var SELECTION_COLOR: FlxColor = FlxColor.LIME;
 
+  var selectionSprite: FlxSprite;
   var selectionStart: FlxPoint = new FlxPoint();
 
   public function new(color: FlxColor) {
+    super();
+
     this.color = color;
 
     selectionSprite = new FlxSprite();
@@ -30,7 +32,6 @@ class Player {
     selectionSprite.immovable = true;
     selectionSprite.moves = false;
     selectionSprite.makeGraphic(1, 1, FlxColor.TRANSPARENT, true);
-
 
     var unitCoords = [
       [30, 30],
@@ -52,6 +53,9 @@ class Player {
       var unit = new Unit(coords[0], coords[1], color, SELECTION_COLOR);
       units.add(unit);
     }
+
+    add(units);
+    add(selectionSprite);
   }
 
   public function selectedUnits(): Array<Unit> {
