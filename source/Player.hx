@@ -29,12 +29,7 @@ class Player {
     selectionSprite.active = false;
     selectionSprite.immovable = true;
     selectionSprite.moves = false;
-    selectionSprite.makeGraphic(
-      FlxG.width,
-      FlxG.height,
-      FlxColor.TRANSPARENT,
-      true
-    );
+    selectionSprite.makeGraphic(1, 1, FlxColor.TRANSPARENT, true);
 
 
     var unitCoords = [
@@ -74,23 +69,28 @@ class Player {
       selectionSprite.visible = true;
     } else if (FlxG.mouse.pressed) {
       var mouse = FlxG.mouse.getWorldPosition();
-
-      selection.x = Math.min(mouse.x, selectionStart.x);
-      selection.y = Math.min(mouse.y, selectionStart.y);
-      selection.width = Math.abs(mouse.x - selectionStart.x);
-      selection.height = Math.abs(mouse.y - selectionStart.y);
-
+      var x = Std.int(Math.min(mouse.x, selectionStart.x));
+      var y = Std.int(Math.min(mouse.y, selectionStart.y));
+      var width = Std.int(Math.abs(mouse.x - selectionStart.x));
+      var height = Std.int(Math.abs(mouse.y - selectionStart.y));
       var lineStyle: LineStyle = {thickness: SELECTION_THICKNESS, color: FlxColor.BLUE};
 
-      FlxSpriteUtil.fill(selectionSprite, FlxColor.TRANSPARENT);
+      selection.x = x;
+      selection.y = y;
+      selection.width = width;
+      selection.height = height;
+      selectionSprite.x = x;
+      selectionSprite.y = y;
 
-      if (selection.width > 0 && selection.height > 0) {
+      selectionSprite.makeGraphic(width, height, FlxColor.TRANSPARENT, true);
+
+      if (width > 0 && height > 0) {
         FlxSpriteUtil.drawRect(
           selectionSprite,
-          selection.x,
-          selection.y,
-          selection.width,
-          selection.height,
+          0,
+          0,
+          width,
+          height,
           FlxColor.TRANSPARENT,
           lineStyle
         );
