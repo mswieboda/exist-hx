@@ -42,6 +42,9 @@ class Path extends FlxGroup {
   ) {
     super();
 
+    active = false;
+    visible = false;
+
     this.startX = startX;
     this.startY = startY;
     this.endX = endX;
@@ -49,7 +52,16 @@ class Path extends FlxGroup {
     this.distancePercent = 1;
     this.color = 0x6600FF00;
     this.lineSprite = new FlxSprite();
+    lineSprite.active = false;
+    lineSprite.visible = false;
+    lineSprite.immovable = true;
+    lineSprite.moves = false;
+
     this.arrowSprite = new FlxSprite();
+    arrowSprite.active = false;
+    arrowSprite.visible = false;
+    arrowSprite.immovable = true;
+    arrowSprite.moves = false;
 
     recalc();
 
@@ -138,6 +150,10 @@ class Path extends FlxGroup {
   override function update(elapsed: Float) {
     super.update(elapsed);
 
+    updateArrow(elapsed);
+  }
+
+  function updateArrow(elapsed: Float) {
     distancePercent += ARROW_SPEED * elapsed;
     distancePercent = distancePercent > 1.0 ? 0 : distancePercent;
 
@@ -145,11 +161,15 @@ class Path extends FlxGroup {
   }
 
   public function show() {
+    active = true;
+    visible = true;
     lineSprite.visible = true;
     arrowSprite.visible = true;
   }
 
   public function hide() {
+    active = false;
+    visible = false;
     lineSprite.visible = false;
     arrowSprite.visible = false;
   }

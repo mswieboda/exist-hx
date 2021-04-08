@@ -112,4 +112,16 @@ class Player extends FlxGroup {
       hasSelectedUnits = hasSelectedUnits || unit.selected();
     });
   }
+
+  // TODO: testing why everything slows down when multiple units selected, with paths
+  // override function update(elapsed: Float) {
+  //   var startTime = Sys.time() * 1000;
+
+  //   super.update(elapsed);
+
+  //   var endTime = Sys.time() * 1000;
+  //   var milliseconds = endTime - startTime;
+
+  //   trace('>>> Player update took $milliseconds ms ${Sys.time()}');
+  // }
 }
