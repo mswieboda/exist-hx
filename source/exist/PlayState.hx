@@ -19,14 +19,6 @@ class PlayState extends FlxState {
 
     add(map);
     add(player);
-
-    // Testing path drawing
-    add(new Path(0, 0, 50, 50));
-    add(new Path(200, 0, 100, 50));
-    add(new Path(400, 50, 300, 0));
-    add(new Path(500, 50, 600, 0));
-    add(new Path(700, 0, 750, 50));
-
     add(hud);
 
     super.create();

@@ -12,6 +12,7 @@ class Unit extends FlxGroup {
 
   public var selectedCircle(default, null): FlxSprite;
   public var selectionIcon: FlxSprite;
+  public var path: Path;
 
   var sprite: FlxSprite;
 
@@ -43,6 +44,9 @@ class Unit extends FlxGroup {
     selectionIcon.moves = false;
     selectionIcon.makeGraphic(HeadsUpDisplay.GRID_ICON_SIZE, HeadsUpDisplay.GRID_ICON_SIZE, FlxColor.BLUE);
 
+    path = new Path();
+
+    add(path);
     add(selectedCircle);
     add(sprite);
   }
@@ -94,5 +98,30 @@ class Unit extends FlxGroup {
         }
       }
     }
+  }
+
+  public function updatePath() {
+    var selected = selected();
+
+    if (selected) {
+      path.show();
+    } else {
+      path.hide();
+    }
+
+    if (!selected || !FlxG.mouse.justPressedRight) {
+      return;
+    }
+
+    var x = sprite.x + sprite.width / 2;
+    var y = sprite.y + sprite.height - sprite.height / 4;
+
+    path.startX = x;
+    path.startY = y;
+    path.endX = FlxG.mouse.x;
+    path.endY = FlxG.mouse.y;
+
+    path.recalc();
+    path.show();
   }
 }

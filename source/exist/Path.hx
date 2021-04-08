@@ -10,17 +10,20 @@ import flixel.util.FlxSpriteUtil;
 
 class Path extends FlxGroup {
   public static inline var ARROW_SPEED = 0.333;
+  public static inline var THICKNESS = 5;
 
-  public var startX(default, null): Int;
-  public var startY(default, null): Int;
-  public var endX(default, null): Int;
-  public var endY(default, null): Int;
-  public var dx(default, null): Int;
-  public var dy(default, null): Int;
+  public var startX: Float;
+  public var startY: Float;
+  public var endX: Float;
+  public var endY: Float;
+  public var dx(default, null): Float;
+  public var dy(default, null): Float;
   public var distance(default, null): Float;
   public var distancePercent(default, null): Float;
   public var unitVector(default, null): FlxPoint;
 
+  var color: FlxColor;
+  var lineSprite: FlxSprite;
   var arrowSprite: FlxSprite;
 
   static inline function degToRad(deg: Float): Float {
@@ -31,72 +34,73 @@ class Path extends FlxGroup {
       return 180 / Math.PI * rad;
   }
 
-  public function new(startX: Int, startY: Int, endX: Int, endY: Int) {
+  public function new(
+    startX: Float = 0,
+    startY: Float = 0,
+    endX: Float = 0,
+    endY: Float = 0
+  ) {
     super();
 
     this.startX = startX;
     this.startY = startY;
     this.endX = endX;
     this.endY = endY;
+    this.distancePercent = 1;
+    this.color = 0x6600FF00;
+    this.lineSprite = new FlxSprite();
+    this.arrowSprite = new FlxSprite();
 
-    // NOTE: if startX, startY, endX, endY ever change these need to be recalculated
-    dx = endX - startX;
-    dy = endY - startY;
-    distance = Math.sqrt(dx * dx + dy * dy);
-    distancePercent = 0.0;
-    unitVector = new FlxPoint(dx / distance, dy / distance);
-
-    var thickness = 5;
-    var color = 0x6600FF00;
-    var lineSprite = new FlxSprite();
-    drawLine(lineSprite, thickness, color);
-
-    arrowSprite = new FlxSprite();
-    drawArrow(1.0, color, thickness);
-
-    arrowSprite.x = startX + unitVector.x * distance * distancePercent - arrowSprite.width / 2;
-    arrowSprite.y = startY + unitVector.y * distance * distancePercent - arrowSprite.height / 2;
+    recalc();
 
     add(lineSprite);
     add(arrowSprite);
   }
 
-  function drawLine(sprite: FlxSprite, thickness: Int, color: FlxColor) {
+  public function recalc() {
+    dx = this.endX - this.startX;
+    dy = this.endY - this.startY;
+    distance = Math.sqrt(dx * dx + dy * dy);
+    distancePercent = 0.0;
+    unitVector = new FlxPoint(dx / distance, dy / distance);
+
+    drawLine();
+    drawArrow();
+    repositionArrow();
+  }
+
+  function drawLine() {
     var x = Math.min(startX, endX);
     var y = Math.min(startY, endY);
     var width = Math.abs(endX - startX);
     var height = Math.abs(endY - startY);
-    var lineStyle: LineStyle = {thickness: thickness, color: color};
+    var lineStyle: LineStyle = {thickness: THICKNESS, color: color};
 
-    sprite.x = x - thickness;
-    sprite.y = y - thickness;
+    lineSprite.x = x - THICKNESS;
+    lineSprite.y = y - THICKNESS;
 
-    sprite.makeGraphic(
-      Math.ceil(width) + thickness * 2,
-      Math.ceil(height) + thickness * 2,
+    lineSprite.makeGraphic(
+      Math.ceil(width) + THICKNESS * 2,
+      Math.ceil(height) + THICKNESS * 2,
       FlxColor.TRANSPARENT,
       true
     );
 
     FlxSpriteUtil.drawLine(
-      sprite,
-      thickness + startX - x,
-      thickness + startY - y,
-      thickness + endX - x,
-      thickness + endY - y,
+      lineSprite,
+      THICKNESS + startX - x,
+      THICKNESS + startY - y,
+      THICKNESS + endX - x,
+      THICKNESS + endY - y,
       lineStyle
     );
   }
 
-  function drawArrow(distancePercent: Float, color: FlxColor, thickness: Int) {
-    var halfBase = thickness * 2;
+  function drawArrow() {
+    var halfBase = THICKNESS * 2;
     var base = halfBase * 2;
     var arrowTheta = Math.asin(halfBase / base);
     var height = halfBase / Math.tan(arrowTheta);
-
-    var d = distance * distancePercent;
-    var dxSign = dx / Math.abs(dx);
-    var dySign = dy / Math.abs(dy);
 
     var uV = unitVector;
     var puV = new FlxPoint(-uV.y, uV.x);
@@ -126,12 +130,27 @@ class Path extends FlxGroup {
     FlxSpriteUtil.drawPolygon(arrowSprite, points, color);
   }
 
+  function repositionArrow() {
+    arrowSprite.x = startX + unitVector.x * distance * distancePercent - arrowSprite.width / 2;
+    arrowSprite.y = startY + unitVector.y * distance * distancePercent - arrowSprite.height / 2;
+  }
+
   override function update(elapsed: Float) {
     super.update(elapsed);
 
     distancePercent += ARROW_SPEED * elapsed;
     distancePercent = distancePercent > 1.0 ? 0 : distancePercent;
-    arrowSprite.x = startX + unitVector.x * distance * distancePercent - arrowSprite.width / 2;
-    arrowSprite.y = startY + unitVector.y * distance * distancePercent - arrowSprite.height / 2;
+
+    repositionArrow();
+  }
+
+  public function show() {
+    lineSprite.visible = true;
+    arrowSprite.visible = true;
+  }
+
+  public function hide() {
+    lineSprite.visible = false;
+    arrowSprite.visible = false;
   }
 }

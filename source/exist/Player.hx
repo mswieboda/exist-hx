@@ -107,6 +107,7 @@ class Player extends FlxGroup {
 
     units.forEach(unit -> {
       unit.updateSelection(selection);
+      unit.updatePath();
 
       hasSelectedUnits = hasSelectedUnits || unit.selected();
     });
