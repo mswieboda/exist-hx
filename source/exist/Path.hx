@@ -9,7 +9,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 
 class Path extends FlxGroup {
-  public static inline var ARROW_SPEED = 0.333;
+  public static inline var ARROW_SPEED = 100;
   public static inline var THICKNESS = 5;
 
   public var startX: Float;
@@ -19,7 +19,6 @@ class Path extends FlxGroup {
   public var dx(default, null): Float;
   public var dy(default, null): Float;
   public var distance(default, null): Float;
-  public var distancePercent(default, null): Float;
   public var unitVector(default, null): FlxPoint;
 
   var color: FlxColor;
@@ -49,7 +48,6 @@ class Path extends FlxGroup {
     this.startY = startY;
     this.endX = endX;
     this.endY = endY;
-    this.distancePercent = 1;
     this.color = 0x6600FF00;
     this.lineSprite = new FlxSprite();
     lineSprite.active = false;
@@ -73,12 +71,13 @@ class Path extends FlxGroup {
     dx = this.endX - this.startX;
     dy = this.endY - this.startY;
     distance = Math.sqrt(dx * dx + dy * dy);
-    distancePercent = 0.0;
     unitVector = new FlxPoint(dx / distance, dy / distance);
 
     drawLine();
     drawArrow();
-    repositionArrow();
+
+    arrowSprite.x = startX - arrowSprite.width / 2;
+    arrowSprite.y = startY - arrowSprite.height / 2;
   }
 
   function drawLine() {
@@ -142,22 +141,27 @@ class Path extends FlxGroup {
     FlxSpriteUtil.drawPolygon(arrowSprite, points, color);
   }
 
-  function repositionArrow() {
-    arrowSprite.x = startX + unitVector.x * distance * distancePercent - arrowSprite.width / 2;
-    arrowSprite.y = startY + unitVector.y * distance * distancePercent - arrowSprite.height / 2;
+  function repositionArrow(elapsed: Float) {
+    var x = arrowSprite.x + unitVector.x * ARROW_SPEED * elapsed;
+    var y = arrowSprite.y + unitVector.y * ARROW_SPEED * elapsed;
+    var arrowDistance = Math.sqrt(
+      Math.pow(startX - x - arrowSprite.width / 2, 2) +
+      Math.pow(startY - y - arrowSprite.height / 2, 2)
+    );
+
+    if (arrowDistance > distance) {
+      x = startX - arrowSprite.width / 2;
+      y = startY - arrowSprite.height / 2;
+    }
+
+    arrowSprite.x = x;
+    arrowSprite.y = y;
   }
 
   override function update(elapsed: Float) {
     super.update(elapsed);
 
-    updateArrow(elapsed);
-  }
-
-  function updateArrow(elapsed: Float) {
-    distancePercent += ARROW_SPEED * elapsed;
-    distancePercent = distancePercent > 1.0 ? 0 : distancePercent;
-
-    repositionArrow();
+    repositionArrow(elapsed);
   }
 
   public function show() {
