@@ -25,14 +25,6 @@ class Path extends FlxGroup {
   var lineSprite: FlxSprite;
   var arrowSprite: FlxSprite;
 
-  static inline function degToRad(deg: Float): Float {
-    return Math.PI / 180 * deg;
-  }
-
-  static inline function radToDeg(rad: Float): Float {
-      return 180 / Math.PI * rad;
-  }
-
   public function new(
     startX: Float = 0,
     startY: Float = 0,
@@ -65,6 +57,19 @@ class Path extends FlxGroup {
 
     add(lineSprite);
     add(arrowSprite);
+  }
+
+  public function isEmpty(): Bool {
+    return dx == 0 && dy == 0;
+  }
+
+  public function reset() {
+    startX = 0;
+    startY = 0;
+    endX = 0;
+    endY = 0;
+
+    recalc();
   }
 
   public function recalc() {

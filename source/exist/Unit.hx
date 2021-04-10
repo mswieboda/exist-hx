@@ -3,12 +3,15 @@ package exist;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxColor;
+import flixel.util.FlxPath;
 
 class Unit extends FlxGroup {
   static inline var WIDTH: Int = 32;
   static inline var HEIGHT: Int = 32;
+  static inline var SPEED: Int = 100;
 
   public var selectedCircle(default, null): FlxSprite;
   public var selectionIcon: FlxSprite;
@@ -26,8 +29,7 @@ class Unit extends FlxGroup {
 
     sprite = new FlxSprite(x, y);
     sprite.loadGraphic(AssetPaths.unit__png, false, WIDTH, HEIGHT);
-    sprite.immovable = true; // TODO: this should be removed when movement implemented
-    sprite.moves = false; // TODO: this should be removed when movement implemented
+    sprite.immovable = true;
     sprite.color = color;
 
     selectedCircle = new FlxSprite(x, y);
@@ -66,6 +68,12 @@ class Unit extends FlxGroup {
   public function toggleSelect() {
     // TODO: sync x, y with sprite when movement implemented
     selectedCircle.visible = !selectedCircle.visible;
+  }
+
+  override function update(elapsed: Float) {
+    super.update(elapsed);
+
+    updateMovement();
   }
 
   public function updateSelection(selection: FlxRect) {
@@ -123,5 +131,15 @@ class Unit extends FlxGroup {
 
     path.recalc();
     path.show();
+
+    sprite.path = new FlxPath().start([new FlxPoint(path.endX, path.endY - sprite.height / 4)], SPEED);
+  }
+
+  function updateMovement() {
+    if (sprite.path == null || sprite.path.finished && path.isEmpty()) return;
+    if (sprite.path.finished) {
+      path.hide();
+      path.reset();
+    }
   }
 }
