@@ -94,7 +94,7 @@ class IsoGrid extends FlxSprite {
         if (row < tiles.length && col < tiles[row].length) {
           var i = tiles[row][col];
 
-          if (i == null) {
+          if (i < 0) {
             // skip this tile, blank/empty, no sprite
             tileIndex++;
             continue;
